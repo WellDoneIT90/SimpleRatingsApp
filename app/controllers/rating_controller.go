@@ -16,8 +16,8 @@ import (
 // @Tags Ratings
 // @Accept json
 // @Produce json
-// @Success 200 {array} models.Ratings
-// @Router /v1/ratings [get]
+// @Success 200 {array} models.Rating
+// @Router /api/v1/ratings [get]
 func GetRatings(c *fiber.Ctx) error {
 	// Create database connection
 	db, err := database.OpenDBConnection()
@@ -29,13 +29,13 @@ func GetRatings(c *fiber.Ctx) error {
 		})
 	}
 
-	// Get all books
+	// Get all ratings
 	ratings, err := db.GetRatings()
 	if err != nil {
-		// Return 404, if book is not found
+		// Return 404, if ratings are not found
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"error":   true,
-			"msg":     "Ratings where not found",
+			"msg":     "Ratings where not found: " + err.Error(),
 			"count":   0,
 			"ratings": nil,
 		})
@@ -57,8 +57,8 @@ func GetRatings(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param id path string true "Rating ID"
-// @Success 200 {object} models.Ratings
-// @Router /v1/rating/{id} [get]
+// @Success 200 {object} models.Rating
+// @Router /api/v1/rating/{id} [get]
 func GetRating(c *fiber.Ctx) error {
 	// Catch rating id from URL
 	id, err := uuid.Parse(c.Params("id"))
@@ -84,7 +84,7 @@ func GetRating(c *fiber.Ctx) error {
 		// Return 404 not found, when rating was not found in Ratings
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"error":  true,
-			"msg":    "rating was not found in Ratings",
+			"msg":    "rating was not found in Ratings: " + err.Error(),
 			"rating": nil,
 		})
 	}
@@ -108,9 +108,9 @@ func GetRating(c *fiber.Ctx) error {
 // @Param author_role body string true "AuthorRole"
 // @Param company_rating body integer true "CompanyRating"
 // @Param description body string true "Description"
-// @Success 200 {object} models.Ratings
+// @Success 200 {object} models.Rating
 // @Security ApiKeyAuth
-// @Router /v1/rating [post]
+// @Router /api/v1/rating [post]
 func CreateRating(c *fiber.Ctx) error {
 	// Get time now
 	now := time.Now().Unix()
@@ -138,9 +138,9 @@ func CreateRating(c *fiber.Ctx) error {
 	}
 
 	// Create a Ratings struct
-	rating := &models.Ratings{}
+	rating := &models.Rating{}
 
-	// Check received JSON from URL Body is valid
+	// Check, if received JSON data is valid
 	if err := c.BodyParser(rating); err != nil {
 		// Return status 400 error
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -186,7 +186,7 @@ func CreateRating(c *fiber.Ctx) error {
 
 	// Return status OK
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"error":  true,
+		"error":  false,
 		"msg":    nil,
 		"rating": rating,
 	})
@@ -198,10 +198,10 @@ func CreateRating(c *fiber.Ctx) error {
 // @Tags Rating
 // @Accept json
 // @Produce json
-// @Param id body string true "Rating ID"
+// @Param id path string true "Rating ID"
 // @Success 204 {string} status "ok"
 // @Security ApiKeyAuth
-// @Router /v1/rating/ [delete]
+// @Router /api/v1/rating/{id} [delete]
 func DeleteRating(c *fiber.Ctx) error {
 	// Get now time.
 	now := time.Now().Unix()
@@ -229,12 +229,12 @@ func DeleteRating(c *fiber.Ctx) error {
 	}
 
 	// Create new Ratings struct
-	rating := &models.Ratings{}
+	rating := &models.Rating{}
 
-	// Check, if received JSON data is valid.
-	if err := c.BodyParser(rating); err != nil {
-		// Return status 400 and error message.
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+	// Catch rating id from URL
+	id, err := uuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
 			"msg":   err.Error(),
 		})
@@ -244,7 +244,7 @@ func DeleteRating(c *fiber.Ctx) error {
 	validate := utils.NewValidator()
 
 	// Validate only one rating field ID.
-	if err := validate.StructPartial(rating, "id"); err != nil {
+	if err := validate.StructPartial(rating, id.String()); err != nil {
 		// Return, if some fields are not valid.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": true,
@@ -263,7 +263,7 @@ func DeleteRating(c *fiber.Ctx) error {
 	}
 
 	// Checking, if rating with given exists.
-	foundedBook, err := db.GetRating(rating.ID)
+	foundedBook, err := db.GetRating(id)
 	if err != nil {
 		// Return status 404 and book not found error.
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{

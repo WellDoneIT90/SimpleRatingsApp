@@ -24,7 +24,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/v1/rating": {
+        "/api/v1/rating": {
             "post": {
                 "security": [
                     {
@@ -93,52 +93,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Ratings"
+                            "$ref": "#/definitions/models.Rating"
                         }
                     }
                 }
             }
         },
-        "/v1/rating/": {
-            "delete": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Delete rating by given ID.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Rating"
-                ],
-                "summary": "delete rating by given ID",
-                "parameters": [
-                    {
-                        "description": "Rating ID",
-                        "name": "id",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/rating/{id}": {
+        "/api/v1/rating/{id}": {
             "get": {
                 "description": "Get rating by given ID.",
                 "consumes": [
@@ -164,13 +125,48 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Ratings"
+                            "$ref": "#/definitions/models.Rating"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete rating by given ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Rating"
+                ],
+                "summary": "delete rating by given ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Rating ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
             }
         },
-        "/v1/ratings": {
+        "/api/v1/ratings": {
             "get": {
                 "description": "Get all existing ratings.",
                 "consumes": [
@@ -189,14 +185,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Ratings"
+                                "$ref": "#/definitions/models.Rating"
                             }
                         }
                     }
                 }
             }
         },
-        "/v1/token/new": {
+        "/api/v1/token/new": {
             "get": {
                 "description": "Create a new access token.",
                 "consumes": [
@@ -221,7 +217,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.Ratings": {
+        "models.Rating": {
             "type": "object",
             "required": [
                 "author",
@@ -244,7 +240,7 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "created_at": {
+                "createdat": {
                     "type": "string"
                 },
                 "description": {

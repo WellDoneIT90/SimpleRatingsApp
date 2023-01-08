@@ -10,15 +10,15 @@ SET TIMEZONE="Europe/Berlin";
 
 -- Create Ratings table
 CREATE TABLE RATINGS (
-    id UUID DEFAULT uuid_generate_v4 (),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW (),
-    company VARCHAR (255) NOT NULL,
-    author VARCHAR (255) NOT NULL,
-    author_role VARCHAR (255) NOT NULL,
-    company_rating INT NOT NULL DEFAULT 0,
-    decription TEXT NOT NULL,
+    "ID" UUID DEFAULT uuid_generate_v4 (),
+    "CREATED_AT" TIMESTAMP WITH TIME ZONE DEFAULT NOW (),
+    "COMPANY" VARCHAR (255) NOT NULL,
+    "AUTHOR" VARCHAR (255) NOT NULL,
+    "AUTHOR_ROLE" VARCHAR (255) NOT NULL,
+    "COMPANY_RATING" INT NOT NULL DEFAULT 1,
+    "DESCRIPTION" TEXT NOT NULL,
 
-    PRIMARY KEY(id),
+    PRIMARY KEY("ID"),
     CONSTRAINT valid_rating
-        CHECK (company_rating <= 5)
+        CHECK ("COMPANY_RATING" <= 5)
 );

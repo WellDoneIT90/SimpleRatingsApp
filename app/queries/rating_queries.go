@@ -12,15 +12,15 @@ type RatingQueries struct {
 }
 
 // GetRatings method for getting all ratings.
-func (q *RatingQueries) GetRatings() ([]models.Ratings, error) {
+func (q *RatingQueries) GetRatings() ([]models.Rating, error) {
 	// Define ratings variable
-	ratings := []models.Ratings{}
+	ratings := []models.Rating{}
 
 	//define query string
 	query := `SELECT * FROM ratings`
 
 	// send query to database
-	err := q.Get(&ratings, query)
+	err := q.Select(&ratings, query)
 	if err != nil {
 		return ratings, err
 	}
@@ -29,12 +29,12 @@ func (q *RatingQueries) GetRatings() ([]models.Ratings, error) {
 }
 
 // GetRating method for getting one rating by given ID.
-func (q *RatingQueries) GetRating(id uuid.UUID) (models.Ratings, error) {
+func (q *RatingQueries) GetRating(id uuid.UUID) (models.Rating, error) {
 	// Define rating variable
-	rating := models.Ratings{}
+	rating := models.Rating{}
 
 	// Define query string
-	query := `SELECT * FROM ratings WHERE id = $1`
+	query := `SELECT * FROM ratings WHERE "ID" = $1`
 
 	// Send query to database
 	err := q.Get(&rating, query, id)
@@ -46,7 +46,7 @@ func (q *RatingQueries) GetRating(id uuid.UUID) (models.Ratings, error) {
 }
 
 // CreateRating method to create new rating by given rating object.
-func (q *RatingQueries) CreateRating(r *models.Ratings) error {
+func (q *RatingQueries) CreateRating(r *models.Rating) error {
 	// Define query string
 	query := `INSERT INTO ratings VALUES ($1, $2, $3, $4, $5, $6, $7)`
 
@@ -62,7 +62,7 @@ func (q *RatingQueries) CreateRating(r *models.Ratings) error {
 // DeleteRating method to delete rating by given ID.
 func (q *RatingQueries) DeleteRating(id uuid.UUID) error {
 	// Define query string
-	query := `DELETE FROM ratings WHERE id = $1`
+	query := `DELETE FROM ratings WHERE "ID" = $1`
 
 	// Send query to database
 	_, err := q.Exec(query, id)

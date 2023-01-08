@@ -11,7 +11,7 @@ import (
 // @Accept json
 // @Produce json
 // @Success 200 {string} status "ok"
-// @Router /v1/token/new [get]
+// @Router /api/v1/token/new [get]
 func GetNewAccessToken(c *fiber.Ctx) error {
 	token, err := utils.GenerateNewAccessToken()
 	if err != nil {

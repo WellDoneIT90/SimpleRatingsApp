@@ -1,0 +1,174 @@
+{
+	"info": {
+		"_postman_id": "3c77a163-8ee5-4e48-b726-2a0eedcfda5b",
+		"name": "Testing Ratings App",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23333585"
+	},
+	"item": [
+		{
+			"name": "Get token",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/v1/token/new",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"token",
+						"new"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new Rating",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NzMxOTQwNjR9.ubqsYCTz37S1wa3UWCjNDpb_QoKwEpjssUQUNO91d_c",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"company\": \"apple\",\n    \"author\": \"WellDoneIT\",\n    \"authorrole\": \"apple user\",\n    \"rating\": 5,\n    \"description\": \"I am always happy using apple\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/v1/rating",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"rating"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all Ratings",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/v1/ratings",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"ratings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Rating by ID",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/v1/rating/74de102c-4085-4658-9fef-7bef08b4ada9",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"rating",
+						"74de102c-4085-4658-9fef-7bef08b4ada9"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete one rating",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NzMxOTM1NjB9.t_tuEAN5Wk4vyFqFkXXC6CMUF1uKL0Qf671ouWQExmA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/v1/rating/74de102c-4085-4658-9fef-7bef08b4ada9",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"rating",
+						"74de102c-4085-4658-9fef-7bef08b4ada9"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

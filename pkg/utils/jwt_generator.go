@@ -19,10 +19,10 @@ func GenerateNewAccessToken() (string, error) {
 	claims := jwt.MapClaims{}
 
 	// Set public claims
-	claims["exp"] = time.Now().Add(time.Minute * time.Duration(minutesCount))
+	claims["exp"] = time.Now().Add(time.Minute * time.Duration(minutesCount)).Unix()
 
 	// Create a new JWT access token with claims
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	// Generate token
 	t, err := token.SignedString([]byte(secret))

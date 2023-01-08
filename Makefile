@@ -42,7 +42,7 @@ docker.fiber.build:
 docker.fiber: docker.fiber.build
 	docker run --rm -d \
 		--name dev-fiber \
-		--network dev-netowrk \
+		--network dev-network \
 		-p 5000:5000 \
 		fiber
 

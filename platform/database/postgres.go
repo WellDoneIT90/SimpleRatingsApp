@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
+
+	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
 func PostgreSQLConnection() (*sqlx.DB, error) {

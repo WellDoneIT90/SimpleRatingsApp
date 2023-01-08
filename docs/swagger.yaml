@@ -1,5 +1,5 @@
 definitions:
-  models.Ratings:
+  models.Rating:
     properties:
       author:
         maxLength: 255
@@ -10,7 +10,7 @@ definitions:
       company:
         maxLength: 255
         type: string
-      created_at:
+      createdat:
         type: string
       description:
         maxLength: 255
@@ -41,7 +41,7 @@ info:
   title: API
   version: "1.0"
 paths:
-  /v1/rating:
+  /api/v1/rating:
     post:
       consumes:
       - application/json
@@ -83,24 +83,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Ratings'
+            $ref: '#/definitions/models.Rating'
       security:
       - ApiKeyAuth: []
       summary: create a new rating
       tags:
       - Rating
-  /v1/rating/:
+  /api/v1/rating/{id}:
     delete:
       consumes:
       - application/json
       description: Delete rating by given ID.
       parameters:
       - description: Rating ID
-        in: body
+        in: path
         name: id
         required: true
-        schema:
-          type: string
+        type: string
       produces:
       - application/json
       responses:
@@ -113,7 +112,6 @@ paths:
       summary: delete rating by given ID
       tags:
       - Rating
-  /v1/rating/{id}:
     get:
       consumes:
       - application/json
@@ -130,11 +128,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Ratings'
+            $ref: '#/definitions/models.Rating'
       summary: get rating by given ID
       tags:
       - Rating
-  /v1/ratings:
+  /api/v1/ratings:
     get:
       consumes:
       - application/json
@@ -146,12 +144,12 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Ratings'
+              $ref: '#/definitions/models.Rating'
             type: array
       summary: get all existing ratings
       tags:
       - Ratings
-  /v1/token/new:
+  /api/v1/token/new:
     get:
       consumes:
       - application/json

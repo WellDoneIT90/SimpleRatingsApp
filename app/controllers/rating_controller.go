@@ -5,11 +5,19 @@ import (
 
 	"github.com/WellDoneIT90/SimpleRatingsApp/app/models"
 	"github.com/WellDoneIT90/SimpleRatingsApp/pkg/utils"
+	"github.com/WellDoneIT90/SimpleRatingsApp/platform/database"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
 
 // GetRatings func gets all ratings in Ratings
+// @Description Get all existing ratings.
+// @Summary get all existing ratings
+// @Tags Ratings
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.Ratings
+// @Router /v1/ratings [get]
 func GetRatings(c *fiber.Ctx) error {
 	// Create database connection
 	db, err := database.OpenDBConnection()
@@ -42,7 +50,15 @@ func GetRatings(c *fiber.Ctx) error {
 	})
 }
 
-// GetRating funx gets one rating by given ID
+// GetRating func gets one rating by given ID
+// @Description Get rating by given ID.
+// @Summary get rating by given ID
+// @Tags Rating
+// @Accept json
+// @Produce json
+// @Param id path string true "Rating ID"
+// @Success 200 {object} models.Ratings
+// @Router /v1/rating/{id} [get]
 func GetRating(c *fiber.Ctx) error {
 	// Catch rating id from URL
 	id, err := uuid.Parse(c.Params("id"))
@@ -82,12 +98,25 @@ func GetRating(c *fiber.Ctx) error {
 }
 
 // CreateRating func to create a new rating
+// @Description Create a new rating.
+// @Summary create a new rating
+// @Tags Rating
+// @Accept json
+// @Produce json
+// @Param company body string true "Company"
+// @Param author body string true "Author"
+// @Param author_role body string true "AuthorRole"
+// @Param company_rating body integer true "CompanyRating"
+// @Param description body string true "Description"
+// @Success 200 {object} models.Ratings
+// @Security ApiKeyAuth
+// @Router /v1/rating [post]
 func CreateRating(c *fiber.Ctx) error {
 	// Get time now
 	now := time.Now().Unix()
 
 	// Get claims from JWT
-	claims, err := utils.ExtractTokenMetadata()
+	claims, err := utils.ExtractTokenMetadata(c)
 	if err != nil {
 		// Return status 500 and JWT parse error
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -97,7 +126,7 @@ func CreateRating(c *fiber.Ctx) error {
 	}
 
 	// Set expiration time from JWT to current rating
-	expires = claims.Expires
+	expires := claims.Expires
 
 	// Checking if Now is greather then expiration from JWT
 	if now > expires {
@@ -164,3 +193,94 @@ func CreateRating(c *fiber.Ctx) error {
 }
 
 // DeleteRating func to delete one rating by given ID from Ratings
+// @Description Delete rating by given ID.
+// @Summary delete rating by given ID
+// @Tags Rating
+// @Accept json
+// @Produce json
+// @Param id body string true "Rating ID"
+// @Success 204 {string} status "ok"
+// @Security ApiKeyAuth
+// @Router /v1/rating/ [delete]
+func DeleteRating(c *fiber.Ctx) error {
+	// Get now time.
+	now := time.Now().Unix()
+
+	// Get claims from JWT.
+	claims, err := utils.ExtractTokenMetadata(c)
+	if err != nil {
+		// Return status 500 and JWT parse error.
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	// Set expiration time from JWT data of current ratings.
+	expires := claims.Expires
+
+	// Checking, if now time greather than expiration from JWT.
+	if now > expires {
+		// Return status 401 and unauthorized error message.
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": true,
+			"msg":   "unauthorized, check expiration time of your token",
+		})
+	}
+
+	// Create new Ratings struct
+	rating := &models.Ratings{}
+
+	// Check, if received JSON data is valid.
+	if err := c.BodyParser(rating); err != nil {
+		// Return status 400 and error message.
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	// Create a new validator for a Rating model.
+	validate := utils.NewValidator()
+
+	// Validate only one rating field ID.
+	if err := validate.StructPartial(rating, "id"); err != nil {
+		// Return, if some fields are not valid.
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   utils.ValidatorErrors(err),
+		})
+	}
+
+	// Create database connection.
+	db, err := database.OpenDBConnection()
+	if err != nil {
+		// Return status 500 and database connection error.
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	// Checking, if rating with given exists.
+	foundedBook, err := db.GetRating(rating.ID)
+	if err != nil {
+		// Return status 404 and book not found error.
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": true,
+			"msg":   "book with this ID not found",
+		})
+	}
+
+	// Delete book by given ID.
+	if err := db.DeleteRating(foundedBook.ID); err != nil {
+		// Return status 500 and error message.
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	// Return status 204 no content.
+	return c.SendStatus(fiber.StatusNoContent)
+}

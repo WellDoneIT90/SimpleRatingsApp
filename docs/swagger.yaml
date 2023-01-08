@@ -1,4 +1,174 @@
+definitions:
+  models.Ratings:
+    properties:
+      author:
+        maxLength: 255
+        type: string
+      authorrole:
+        maxLength: 255
+        type: string
+      company:
+        maxLength: 255
+        type: string
+      created_at:
+        type: string
+      description:
+        maxLength: 255
+        type: string
+      id:
+        type: string
+      rating:
+        maximum: 5
+        minimum: 1
+        type: integer
+    required:
+    - author
+    - authorrole
+    - company
+    - description
+    - id
+    - rating
+    type: object
 info:
-  contact: {}
-paths: {}
+  contact:
+    email: your@mail.com
+    name: API Support
+  description: This is an auto-generated API Docs.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: API
+  version: "1.0"
+paths:
+  /v1/rating:
+    post:
+      consumes:
+      - application/json
+      description: Create a new rating.
+      parameters:
+      - description: Company
+        in: body
+        name: company
+        required: true
+        schema:
+          type: string
+      - description: Author
+        in: body
+        name: author
+        required: true
+        schema:
+          type: string
+      - description: AuthorRole
+        in: body
+        name: author_role
+        required: true
+        schema:
+          type: string
+      - description: CompanyRating
+        in: body
+        name: company_rating
+        required: true
+        schema:
+          type: integer
+      - description: Description
+        in: body
+        name: description
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Ratings'
+      security:
+      - ApiKeyAuth: []
+      summary: create a new rating
+      tags:
+      - Rating
+  /v1/rating/:
+    delete:
+      consumes:
+      - application/json
+      description: Delete rating by given ID.
+      parameters:
+      - description: Rating ID
+        in: body
+        name: id
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ok
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: delete rating by given ID
+      tags:
+      - Rating
+  /v1/rating/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get rating by given ID.
+      parameters:
+      - description: Rating ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Ratings'
+      summary: get rating by given ID
+      tags:
+      - Rating
+  /v1/ratings:
+    get:
+      consumes:
+      - application/json
+      description: Get all existing ratings.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Ratings'
+            type: array
+      summary: get all existing ratings
+      tags:
+      - Ratings
+  /v1/token/new:
+    get:
+      consumes:
+      - application/json
+      description: Create a new access token.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: create a new access token
+      tags:
+      - Token
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
